@@ -4,8 +4,8 @@ import (
 	"context"
 	"net"
 
-	"github.com/contiv/bgp-vpp/plugins/bgp/descriptor/adapter"
-	"github.com/contiv/bgp-vpp/plugins/bgp/model"
+	"github.com/contiv/vpp/plugins/bgp/descriptor/adapter"
+	"github.com/contiv/vpp/plugins/bgp/model"
 	"github.com/ligato/cn-infra/logging"
 	kvs "github.com/ligato/vpp-agent/plugins/kvscheduler/api"
 	bgpapi "github.com/osrg/gobgp/api"

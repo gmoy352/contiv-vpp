@@ -9,7 +9,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/contiv/bgp-vpp/plugins/bgp/descriptor"
+	"github.com/contiv/vpp/plugins/bgp/descriptor"
 	"github.com/contiv/vpp/plugins/ipnet/restapi"
 	"github.com/contiv/vpp/plugins/ksr/model/node"
 	"github.com/contiv/vpp/plugins/netctl/remote"

@@ -1,7 +1,7 @@
 package contiv_bgp
 
 import (
-	"github.com/contiv/bgp-vpp/plugins/bgp"
+	"github.com/contiv/vpp/plugins/bgp"
 	"github.com/ligato/cn-infra/agent"
 	"github.com/ligato/cn-infra/datasync"
 	"github.com/ligato/cn-infra/datasync/kvdbsync"
