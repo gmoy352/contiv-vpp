@@ -1,9 +1,5 @@
 package bgp
 
-//go:generate protoc --proto_path=model --proto_path=$GOPATH/src --gogo_out=model model/bgp.proto
-//go:generate descriptor-adapter --descriptor-name GlobalConf --value-type *model.GlobalConf --import "model" --output-dir "descriptor"
-//go:generate descriptor-adapter --descriptor-name PeerConf --value-type *model.PeerConf --import "model" --output-dir "descriptor"
-
 import (
 	"bytes"
 	"context"
@@ -29,6 +25,10 @@ import (
 	"strings"
 )
 
+//go:generate protoc --proto_path=model --proto_path=$GOPATH/src --gogo_out=model model/bgp.proto
+//go:generate descriptor-adapter --descriptor-name GlobalConf --value-type *model.GlobalConf --import "model" --output-dir "descriptor"
+//go:generate descriptor-adapter --descriptor-name PeerConf --value-type *model.PeerConf --import "model" --output-dir "descriptor"
+
 type BgpPlugin struct {
 	Deps
 	watchCloser chan string
@@ -37,8 +37,6 @@ type BgpPlugin struct {
 	hasConfigChan chan bool
 	hasConfig bool
 	etcdInUse bool
-
-
 }
 
 //Deps is only for external dependencies
@@ -63,7 +61,6 @@ func (p *BgpPlugin) Init() error {
 		p.BGPServer = gobgp.NewBgpServer()
 		go p.BGPServer.Serve()
 	}
-
 	p.hasConfig = false
 	p.etcdInUse = false
 	p.nlriMap = make(map[uint32]*any.Any)
@@ -84,9 +81,7 @@ func (p *BgpPlugin) Init() error {
 		p.Log.Errorf("Failed to start the node watcher, error %s", err)
 		return err
 	}
-
 	go p.addExisting()
-
 	p.Log.Info("BGP Plugin initialized")
 	return nil
 }
@@ -154,76 +149,7 @@ func (p *BgpPlugin) onChange(resp datasync.ProtoWatchResp) {
 	default:
 		p.Log.Errorf("GetChangeType: %v", changeType)
 	}
-	ipam := restapi.NodeIPAMInfo{}
-	err = json.Unmarshal(b, &ipam)
-	if err != nil {
-		p.Log.Errorf("failed to unmarshal IpamEntry, error: %s, buffer: %+v", err, b)
-		return
-	}
-	//Setting Route info
-	ip:= ipam.NodeIP
-	podSubnetParts := strings.Split(ipam.PodSubnetThisNode, "/")
-	prefixLen, err := strconv.ParseUint(podSubnetParts[1], 10, 32)
-	if err != nil {
-		p.Log.Errorf("failed to convert pod subnet mask %s on node %d to uint, error %s",
-			ipam.PodSubnetThisNode, id, err)
-		return
-	}
-	p.Log.Infof("PREFIX: %s, ", podSubnetParts[0])
-	p.Log.Infof("PREFIXLEN: %d, ",uint32(prefixLen) )
-	nlri, _ := ptypes.MarshalAny(&bgp_api.IPAddressPrefix{
-		Prefix:    podSubnetParts[0],
-		PrefixLen: uint32(prefixLen),
-	})
-	a1, _ := ptypes.MarshalAny(&bgp_api.OriginAttribute{
-		Origin: 0,
-	})
-	a2, _ := ptypes.MarshalAny(&bgp_api.NextHopAttribute{
-		NextHop: ip,
-	})
-	attrs := []*any.Any{a1, a2}
-	p.Log.Infof("Put operation with NLRI: %v and Next Hop: %v", nlri, ip)
-	_, err = p.Deps.BGPServer.AddPath(context.Background(), &bgp_api.AddPathRequest{
-		Path: &bgp_api.Path{
-			Family: &bgp_api.Family{Afi: bgp_api.Family_AFI_IP, Safi: bgp_api.Family_SAFI_UNICAST},
-			Nlri:   nlri,
-			Pattrs: attrs,
-		},
-	})
-	if err != nil {
-		p.Log.Errorf("AddPath: %v", err)
-	}
-	p.nlriMap[id] = nlri
-	p.nextHopMap[id]=ip
-}
 
-func(p *BgpPlugin)delete(id uint32) {
-	nlri := p.nlriMap[id]
-	ip := p.nextHopMap[id]
-	if nlri == nil || ip == "" {
-		p.Log.Error("Node with id %d has not yet been added",id)
-		return
-	}
-	a1, _ := ptypes.MarshalAny(&bgp_api.OriginAttribute{
-		Origin: 0,
-	})
-	a2, _ := ptypes.MarshalAny(&bgp_api.NextHopAttribute{
-		NextHop: ip,
-	})
-	attrs := []*any.Any{a1, a2}
-	p.Log.Infof("Deleting Path with NLRI: %v", nlri)
-	err := p.Deps.BGPServer.DeletePath(context.Background(), &bgp_api.DeletePathRequest{
-		Path: &bgp_api.Path{
-			Family: &bgp_api.Family{Afi: bgp_api.Family_AFI_IP, Safi: bgp_api.Family_SAFI_UNICAST},
-			Nlri:   nlri,
-			Pattrs: attrs,
-		},
-	})
-	if err != nil {
-		p.Log.Errorf("AddPath: %v", err)
-	}
-	delete(p.nlriMap, id)
-	delete(p.nextHopMap, id)
 }
 
 func(p *BgpPlugin)add(id uint32, nodeName string) {
