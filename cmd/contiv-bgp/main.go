@@ -1,4 +1,4 @@
-package contiv_bgp
+package main
 
 import (
 	"github.com/contiv/vpp/plugins/bgp"
