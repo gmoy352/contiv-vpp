@@ -169,7 +169,7 @@ func(p *BgpPlugin)add(id uint32, nodeName string) {
 		p.Log.Errorf("Could not find internal ip of %v in %v",nodeName, nodePrefix+nodeName )
 		return
 	}
-	client, err := remote.CreateHTTPClient("../../cmd/bgp/http.client.conf")
+	client, err := remote.CreateHTTPClient("../../cmd/contiv-bgp/http.client.conf")
 	if err != nil {
 		p.Log.Error("create http client error: %v", err)
 		return
