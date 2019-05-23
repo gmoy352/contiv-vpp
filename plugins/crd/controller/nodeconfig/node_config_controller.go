@@ -19,27 +19,24 @@ import (
 	"reflect"
 	"time"
 
-	"k8s.io/apimachinery/pkg/util/wait"
-	"k8s.io/client-go/util/workqueue"
-
+	"github.com/contiv/vpp/plugins/crd/handler"
+	"github.com/contiv/vpp/plugins/crd/handler/nodeconfig"
+	"github.com/contiv/vpp/plugins/crd/pkg/apis/nodeconfig/v1"
+	crdClientSet "github.com/contiv/vpp/plugins/crd/pkg/client/clientset/versioned"
+	factory "github.com/contiv/vpp/plugins/crd/pkg/client/informers/externalversions"
+	informers "github.com/contiv/vpp/plugins/crd/pkg/client/informers/externalversions/nodeconfig/v1"
+	listers "github.com/contiv/vpp/plugins/crd/pkg/client/listers/nodeconfig/v1"
+	"github.com/contiv/vpp/plugins/crd/utils"
+	"github.com/ligato/cn-infra/datasync/kvdbsync"
+	"github.com/ligato/cn-infra/logging"
 	apiextv1beta1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
 	apiextcs "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	meta "k8s.io/apimachinery/pkg/apis/meta/v1"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
+	"k8s.io/apimachinery/pkg/util/wait"
 	k8sCache "k8s.io/client-go/tools/cache"
-
-	"github.com/contiv/vpp/plugins/crd/handler"
-	"github.com/contiv/vpp/plugins/crd/handler/nodeconfig"
-	"github.com/contiv/vpp/plugins/crd/pkg/apis/nodeconfig/v1"
-	"github.com/contiv/vpp/plugins/crd/utils"
-	"github.com/ligato/cn-infra/datasync/kvdbsync"
-	"github.com/ligato/cn-infra/logging"
-
-	crdClientSet "github.com/contiv/vpp/plugins/crd/pkg/client/clientset/versioned"
-	factory "github.com/contiv/vpp/plugins/crd/pkg/client/informers/externalversions"
-	informers "github.com/contiv/vpp/plugins/crd/pkg/client/informers/externalversions/nodeconfig/v1"
-	listers "github.com/contiv/vpp/plugins/crd/pkg/client/listers/nodeconfig/v1"
+	"k8s.io/client-go/util/workqueue"
 )
 
 const maxRetries = 5
@@ -79,10 +76,9 @@ type Event struct {
 
 // Init performs the initialization of NodeConfig Controller
 func (c *Controller) Init() error {
-
-	var event Event
-
 	c.Log.Info("NodeConfig-Controller: initializing...")
+	serverStartTime = time.Now()
+	var event Event
 
 	crdName := reflect.TypeOf(v1.NodeConfig{}).Name()
 	err := c.createCRD(v1.CRDFullContivNodeConfigName,
@@ -142,7 +138,7 @@ func (c *Controller) Init() error {
 			ControllerInformer: c.nodeConfigInformer,
 		},
 	}
-
+	c.eventHandler.Init()
 	return nil
 }
 

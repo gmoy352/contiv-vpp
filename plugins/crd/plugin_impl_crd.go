@@ -239,6 +239,7 @@ func (p *Plugin) AfterInit() error {
 	}
 	go p.telemetryController.Run(p.ctx.Done())
 	go p.nodeConfigController.Run(p.ctx.Done())
+	go p.bgpConfigController.Run(p.ctx.Done())
 
 	return nil
 }

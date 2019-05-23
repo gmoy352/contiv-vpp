@@ -13,11 +13,11 @@ To run the plugin for testing purposes, create the CNI config file `/etc/cni/net
 ```
 
 Given that the `contiv-cni` binary exists in the folder 
-`$GOPATH/src/github.com/contiv/contiv-vpp/cmd/contiv-cni`: 
+`$GOPATH/src/github.com/contiv/vpp/cmd/contiv-cni`:
 
 Set `CNI_PATH` environment variable:
 ```
-CNI_PATH=$GOPATH/src/github.com/contiv/contiv-vpp/cmd/contiv-cni
+CNI_PATH=$GOPATH/src/github.com/contiv/vpp/cmd/contiv-cni
 ```
 
 Enter the folder with CNI scripts and execute the following:

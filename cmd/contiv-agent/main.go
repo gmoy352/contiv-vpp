@@ -18,18 +18,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/ligato/cn-infra/agent"
-	"github.com/ligato/cn-infra/db/keyval/bolt"
-	"github.com/ligato/cn-infra/db/keyval/etcd"
-	"github.com/ligato/cn-infra/health/probe"
-	"github.com/ligato/cn-infra/health/statuscheck"
-	"github.com/ligato/cn-infra/logging"
-	"github.com/ligato/cn-infra/logging/logmanager"
-	"github.com/ligato/cn-infra/logging/logrus"
-	"github.com/ligato/cn-infra/rpc/grpc"
-	"github.com/ligato/cn-infra/rpc/prometheus"
-	"github.com/ligato/cn-infra/rpc/rest"
-
+	"github.com/contiv/vpp/plugins/bgp"
 	"github.com/contiv/vpp/plugins/bgpreflector"
 	"github.com/contiv/vpp/plugins/contivconf"
 	"github.com/contiv/vpp/plugins/controller"
@@ -42,6 +31,17 @@ import (
 	"github.com/contiv/vpp/plugins/policy"
 	"github.com/contiv/vpp/plugins/service"
 	"github.com/contiv/vpp/plugins/statscollector"
+	"github.com/ligato/cn-infra/agent"
+	"github.com/ligato/cn-infra/db/keyval/bolt"
+	"github.com/ligato/cn-infra/db/keyval/etcd"
+	"github.com/ligato/cn-infra/health/probe"
+	"github.com/ligato/cn-infra/health/statuscheck"
+	"github.com/ligato/cn-infra/logging"
+	"github.com/ligato/cn-infra/logging/logmanager"
+	"github.com/ligato/cn-infra/logging/logrus"
+	"github.com/ligato/cn-infra/rpc/grpc"
+	"github.com/ligato/cn-infra/rpc/prometheus"
+	"github.com/ligato/cn-infra/rpc/rest"
 	"github.com/ligato/vpp-agent/plugins/govppmux"
 	"github.com/ligato/vpp-agent/plugins/kvscheduler"
 	linux_ifplugin "github.com/ligato/vpp-agent/plugins/linux/ifplugin"
@@ -223,6 +223,7 @@ func main() {
 	contivConf.ContivAgentDeps = &contivconf.ContivAgentDeps{
 		EventLoop: controller,
 	}
+
 	nodeSyncPlugin.EventLoop = controller
 	podManager.EventLoop = controller
 	ipamPlugin.EventLoop = controller

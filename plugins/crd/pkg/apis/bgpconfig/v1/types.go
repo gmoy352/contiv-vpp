@@ -43,7 +43,41 @@ type BgpConfig struct {
 // BgpConfigSpec is the spec for the contiv bgp configuration resource.
 type BgpConfigSpec struct {
 	// FILL STRUCT HERE
+	BGPGlobal			GlobalConf	`json:"bgpGlobal,omitempty"`
+	Peers []PeerConf `json:"peers,omitempty"`
 }
+
+
+type GlobalConf struct {
+	As                   uint32   `json:"as,omitempty"`
+	RouterId             string   `json:"router_id,omitempty"`
+	ListenPort           int32    `json:"listen_port,omitempty"`
+	ListenAddresses      []string `json:"listen_addresses,omitempty"`
+	Families             []uint32 `json:"families,omitempty"`
+	UseMultiplePaths     bool     `json:"use_multiple_paths,omitempty"`
+}
+
+type PeerConf_RemovePrivateAs int32
+
+type PeerConf struct {
+	Name                 string                   `json:"name,omitempty"`
+	AuthPassword         string                   `json:"auth_password,omitempty"`
+	Description          string                   `json:"description,omitempty"`
+	LocalAs              uint32                   `json:"local_as,omitempty"`
+	NeighborAddress      string                   `json:"neighbor_address,omitempty"`
+	PeerAs               uint32                   `json:"peer_as,omitempty"`
+	PeerGroup            string                   `json:"peer_group,omitempty"`
+	PeerType             uint32                   `json:"peer_type,omitempty"`
+	RemovePrivateAs      PeerConf_RemovePrivateAs `json:"remove_private_as,omitempty"`
+	RouteFlapDamping     bool                     `json:"route_flap_damping,omitempty"`
+	SendCommunity        uint32                   `json:"send_community,omitempty"`
+	NeighborInterface    string                   `json:"neighbor_interface,omitempty"`
+	Vrf                  string                   `json:"vrf,omitempty"`
+	AllowOwnAs           uint32                   `json:"allow_own_as,omitempty"`
+	ReplacePeerAs        bool                     `json:"replace_peer_as,omitempty"`
+	AdminDown            bool                     `json:"admin_down,omitempty"`
+}
+
 
 // BgpConfigList is a list of bgp configuration resource
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

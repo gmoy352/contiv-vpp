@@ -15,6 +15,7 @@
 package handler
 
 import (
+	"github.com/contiv/vpp/plugins/crd/handler/bgpconfig"
 	"github.com/contiv/vpp/plugins/crd/handler/nodeconfig"
 	"github.com/contiv/vpp/plugins/crd/handler/telemetry"
 )
@@ -37,6 +38,7 @@ var Map = map[string]interface{}{
 	"default":    &Default{},
 	"telemetry":  &telemetry.Handler{},
 	"nodeConfig": &nodeconfig.Handler{},
+	"bgpConfig":  &bgpconfig.Handler{},
 }
 
 // Default handler implements Handler interface

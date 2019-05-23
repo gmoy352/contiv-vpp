@@ -76,10 +76,9 @@ type Event struct {
 
 // Init performs the initialization of BgpConfig Controller
 func (c *Controller) Init() error {
-
-	var event Event
-
 	c.Log.Info("BgpConfig-Controller: initializing...")
+	var event Event
+	serverStartTime = time.Now()
 
 	crdName := reflect.TypeOf(v1.BgpConfig{}).Name()
 	err := c.createCRD(v1.CRDFullContivBgpConfigName,
@@ -139,7 +138,7 @@ func (c *Controller) Init() error {
 			ControllerInformer: c.bgpConfigInformer,
 		},
 	}
-
+	c.eventHandler.Init()
 	return nil
 }
 
@@ -215,7 +214,6 @@ func (c *Controller) processNextItem() bool {
 // processItem processes the next item from the queue and send the event update
 // to the BGP config event handler
 func (c *Controller) processItem(event Event) error {
-
 	// process events based on its type
 	switch event.eventType {
 	case "create":

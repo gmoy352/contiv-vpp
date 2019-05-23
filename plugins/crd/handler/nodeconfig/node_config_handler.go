@@ -20,20 +20,18 @@ package nodeconfig
 
 import (
 	"fmt"
+	"reflect"
+	"sync"
+	"time"
+
+	"github.com/contiv/vpp/plugins/crd/handler/nodeconfig/model"
+	"github.com/contiv/vpp/plugins/crd/pkg/apis/nodeconfig/v1"
+	informers "github.com/contiv/vpp/plugins/crd/pkg/client/informers/externalversions/nodeconfig/v1"
 	"github.com/gogo/protobuf/proto"
 	"github.com/ligato/cn-infra/datasync"
 	"github.com/ligato/cn-infra/datasync/kvdbsync"
 	"github.com/ligato/cn-infra/db/keyval"
 	"github.com/ligato/cn-infra/logging"
-
-	"reflect"
-	"sync"
-	"time"
-
-	informers "github.com/contiv/vpp/plugins/crd/pkg/client/informers/externalversions/nodeconfig/v1"
-
-	"github.com/contiv/vpp/plugins/crd/handler/nodeconfig/model"
-	"github.com/contiv/vpp/plugins/crd/pkg/apis/nodeconfig/v1"
 )
 
 const (
